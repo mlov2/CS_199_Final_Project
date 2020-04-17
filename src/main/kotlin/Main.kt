@@ -14,7 +14,11 @@ fun main() {
     embeddedServer(Netty, 8004) {
         routing {
             get("/") {
-                call.respondText("Welcome!")
+                call.respondText("Welcome!  Please sign in.")
+            }
+            get("/home") {
+                val user = "Megan"
+                call.respondText("Welcome back, $user!")
             }
         }
     }.start(wait = true)
