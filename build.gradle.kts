@@ -1,6 +1,9 @@
 plugins {
     kotlin("jvm") version "1.3.61"
     application
+
+    // ktlint formatter plugin
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
 }
 
 group = "org.example"
@@ -13,10 +16,10 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    //Kotlintest dependency
+    // Kotlintest dependency
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
 
-    //To get rid of red warning when running TestMain.kt
+    // To get rid of red warning when running TestMain.kt
     testImplementation("org.slf4j:slf4j-simple:1.7.26")
 }
 
@@ -33,7 +36,7 @@ application {
     mainClassName = "Main.kt"
 }
 
-//Part of kotlintest
+// Part of kotlintest
 tasks.withType<Test> {
     useJUnitPlatform()
 }
