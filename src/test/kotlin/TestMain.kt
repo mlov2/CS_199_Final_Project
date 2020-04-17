@@ -3,6 +3,6 @@ import io.kotlintest.specs.StringSpec
 
 class TestMain : StringSpec({
     "should greet properly" {
-        main() shouldBe "Welcome!"
+        welcome() shouldBe "Welcome!"
     }
 })

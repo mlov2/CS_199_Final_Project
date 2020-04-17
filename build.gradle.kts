@@ -16,6 +16,11 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
+    //Ktor
+    val ktorVersion = "1.3.0"
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+
     // Kotlintest dependency
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
 
