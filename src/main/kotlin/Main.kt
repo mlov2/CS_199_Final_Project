@@ -3,6 +3,8 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
+import io.ktor.http.HttpStatusCode
+import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
@@ -14,7 +16,7 @@ fun welcome(): String {
 }
 
 //part of gson
-//data class WelcomePage(val user: String)
+data class UserPages(val user: String, val pageTitle: String)
 
 //Adding an extension function to the class Application
 fun Application.userPage() {
@@ -28,9 +30,25 @@ fun Application.userPage() {
         get("/") {
             call.respondText(welcome() + " Please sign in.")
         }
-        get("/{user}/home") {
-            val user = call.parameters["user"]
-            call.respondText("Welcome back, $user!")
+        get("/{user}/{page}") {
+            try {
+                val user = call.parameters["user"]
+                val page = call.parameters["page"]
+                val userPage = when (page) {
+                    "home" -> "Welcome back, $user!"
+                    "explore" -> "These books might interest you, $user!"
+                    "shelf" -> "$user's Shelf"
+                    "book buddies" -> "$user's Book Buddies"
+                    else -> throw Exception("There's no page that exists for $page")
+                }
+                call.respond(userPage)
+
+                //the following can be used to return content in gson:
+                //val pageDetails = UserPages(user!!, userPage)
+                //call.respond(pageDetails)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
         }
     }
 }
