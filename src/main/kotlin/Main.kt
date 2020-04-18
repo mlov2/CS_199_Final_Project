@@ -4,9 +4,11 @@ import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
+// import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
+// import io.ktor.routing.post
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -17,6 +19,7 @@ fun welcome(): String {
 
 //part of gson
 data class UserPages(val user: String, val pageTitle: String)
+data class SignIn(val username: String, val password: String, val name: String)
 
 //Adding an extension function to the class Application
 fun Application.userPage() {
@@ -30,6 +33,13 @@ fun Application.userPage() {
         get("/") {
             call.respondText(welcome() + " Please sign in.")
         }
+        // post("/signin") {
+        //     val request = call.receive<SignIn>()
+        //     val user = request.username
+        //     call.respond(user)
+        //     // println(request)
+        //     // call.respond(HttpStatusCode.OK)
+        // }
         get("/{user}/{page}") {
             try {
                 val user = call.parameters["user"]
@@ -44,8 +54,8 @@ fun Application.userPage() {
                 call.respond(userPage)
 
                 //the following can be used to return content in gson:
-                //val pageDetails = UserPages(user!!, userPage)
-                //call.respond(pageDetails)
+                // val pageDetails = UserPages(user!!, userPage)
+                // call.respond(pageDetails)
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest)
             }
