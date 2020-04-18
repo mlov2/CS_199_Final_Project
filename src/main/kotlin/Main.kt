@@ -1,4 +1,8 @@
+import io.ktor.application.Application
 import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
+import io.ktor.gson.gson
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
@@ -9,17 +13,29 @@ fun welcome(): String {
     return "Welcome!"
 }
 
+//part of gson
+//data class WelcomePage(val user: String)
+
+//Adding an extension function to the class Application
+fun Application.userPage() {
+    //gson
+    install(ContentNegotiation) {
+        gson {}
+    }
+
+    //routes
+    routing {
+        get("/") {
+            call.respondText(welcome() + " Please sign in.")
+        }
+        get("/{user}/home") {
+            val user = call.parameters["user"]
+            call.respondText("Welcome back, $user!")
+        }
+    }
+}
+
 //ktor set up
 fun main() {
-    embeddedServer(Netty, 8004) {
-        routing {
-            get("/") {
-                call.respondText("Welcome!  Please sign in.")
-            }
-            get("/home") {
-                val user = "Megan"
-                call.respondText("Welcome back, $user!")
-            }
-        }
-    }.start(wait = true)
+    embeddedServer(Netty, port = 8004, module = Application::userPage).start(wait = true)
 }
