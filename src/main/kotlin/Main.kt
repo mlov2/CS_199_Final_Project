@@ -31,7 +31,14 @@ fun Application.userPage() {
     //routes
     routing {
         get("/") {
-            call.respondText(welcome() + " Please sign in.")
+            call.respondText(
+                welcome() +
+                    "\n\n\nPlease sign in to continue." +
+                    "\nUsername: <TEXT FIELD TO TYPE USERNAME GOES HERE>" +
+                    "\nPassword: <TEXT FIELD TO TYPE PASSWORD GOES HERE>" +
+                    "\n<SIGN IN BUTTON GOES HERE>" +
+                    "\n\nDon't have an account?  Click here to sign up! <SIGN UP BUTTON GOES HERE>"
+            )
         }
         /////
         // post("/signin") {
@@ -49,8 +56,22 @@ fun Application.userPage() {
                 val userPage = when (page) {
                     "home" -> "Welcome back, $user!"
                     "explore" -> "These books might interest you, $user!"
-                    "shelf" -> "$user's Shelf"
-                    "book buddies" -> "$user's Book Buddies"
+                    "library" ->
+                        "$user's Library" +
+                            "\n\n\nCurrently Reading" +
+                            "\nYou aren't currently reading anything--click the Explore tab to start reading!" +
+                            "\n\nWant to Read" +
+                            "\nThis shelf is currently empty--click the Explore tab to add books to this shelf!" +
+                            "\n\nBooks Recommended by Your Book Buddies" +
+                            "\nYou currently don't have any recommended books :(" +
+                            "\n\nFinished Reading" +
+                            "\nYou haven't finished any books yet :(" +
+                            "\n\n$user's Favorites <3" +
+                            "\nYou don't have any favorite books yet, but don't worry!  You'll find one you really love!" +
+                            "\n\nAdd a personalized shelf to your library! <BUTTON TO ADD A SHELF GOES HERE>"
+                    "book buddies" ->
+                        "$user's Book Buddies" +
+                            "\nYou currently don't have any book buddies, but these users have read the same books as you--maybe they'll be your next book buddy! :)"
                     else -> throw Exception("The page '$page' does not exist")
                 }
                 call.respond(userPage)
