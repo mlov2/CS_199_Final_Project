@@ -22,6 +22,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-gson:$ktorVersion")
 
+    //FreeMarker
+    implementation("io.ktor:ktor-freemarker:$ktorVersion")
+
     // Kotlintest dependency
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")

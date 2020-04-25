@@ -1,7 +1,9 @@
+import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
+import io.ktor.freemarker.FreeMarker
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
 // import io.ktor.request.receive
@@ -28,9 +30,16 @@ fun Application.userPage() {
         gson {}
     }
 
+    //FreeMarker
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
+
     //routes
     routing {
         get("/") {
+         //   val phrase = "my CS 199 Final Project"
+         //   call.respond(FreeMarkerContent("Welcome.ftl", phrase))
             call.respondText(
                 welcome() +
                     "\n\n\nPlease sign in to continue." +
