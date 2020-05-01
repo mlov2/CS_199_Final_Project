@@ -1,9 +1,9 @@
-import freemarker.cache.ClassTemplateLoader
+// import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
-import io.ktor.freemarker.FreeMarker
+// import io.ktor.freemarker.FreeMarker
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
 // import io.ktor.request.receive
@@ -33,10 +33,10 @@ fun Application.userPage() {
         gson {}
     }
 
-    //FreeMarker
-    install(FreeMarker) {
-        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
-    }
+    // //FreeMarker
+    // install(FreeMarker) {
+    //     templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    // }
 
     //routes
     routing {
@@ -104,11 +104,11 @@ fun main() {
 }
 
 //lists for bookshelves
-val currentlyReadingShelf = mutableListOf<String>("Moment of Truth", "Life As We Knew It")
-val wantToReadShelf = mutableListOf<String>("Five Feet Apart")
-val recommendedShelf = mutableListOf<String>("The Rest of The Story")
-val finishedShelf = mutableListOf<String>("Legend", "Prodigy", "Champion", "Rebel")
-val favoritesShelf = mutableListOf<String>("The Darkest Minds", "Never Fade", "In the Afterlight", "The Naturals", "")
+val currentlyReadingShelf = mutableListOf("Moment of Truth", "Life As We Knew It")
+val wantToReadShelf = mutableListOf("Five Feet Apart")
+val recommendedShelf = mutableListOf("The Rest of The Story")
+val finishedShelf = mutableListOf("Legend", "Prodigy", "Champion", "Rebel")
+val favoritesShelf = mutableListOf("The Darkest Minds", "Never Fade", "In the Afterlight", "The Naturals", "")
 val shelves = mutableListOf(currentlyReadingShelf, wantToReadShelf, recommendedShelf, finishedShelf, favoritesShelf)
 
 fun shelves(): String {
@@ -128,7 +128,7 @@ fun shelves(): String {
         }
     }
     return "SORRY!  The site owner hasn't gotten to this part to work yet!"
-    //return "ERROR!  Sorry, it seems like this isn't working correctly"
+    // "ERROR!  Sorry, it seems like this isn't working correctly"
 }
 
 /**********************************************************************************************************************/
