@@ -23,6 +23,9 @@ fun welcome(): String {
 data class UserPages(val user: String, val pageTitle: String)
 data class SignIn(val username: String, val password: String, val name: String)
 
+//book info
+data class BookInfo(val title: String, val author: String)
+
 //Adding an extension function to the class Application
 fun Application.userPage() {
     //gson
@@ -68,15 +71,15 @@ fun Application.userPage() {
                     "library" ->
                         "$user's Library" +
                             "\n\n\nCurrently Reading" +
-                            "\nYou aren't currently reading anything--click the Explore tab to start reading!" +
+                            "\n${shelves()}" +
                             "\n\nWant to Read" +
-                            "\nThis shelf is currently empty--click the Explore tab to add books to this shelf!" +
+                            "\n${shelves()}" +
                             "\n\nBooks Recommended by Your Book Buddies" +
-                            "\nYou currently don't have any recommended books :(" +
+                            "\n${shelves()}" +
                             "\n\nFinished Reading" +
-                            "\nYou haven't finished any books yet :(" +
+                            "\n${shelves()}" +
                             "\n\n$user's Favorites <3" +
-                            "\nYou don't have any favorite books yet, but don't worry!  You'll find one you really love!" +
+                            "\n${shelves()}" +
                             "\n\nAdd a personalized shelf to your library! <BUTTON TO ADD A SHELF GOES HERE>"
                     "book buddies" ->
                         "$user's Book Buddies" +
@@ -95,7 +98,53 @@ fun Application.userPage() {
     }
 }
 
-//ktor set up
+//ktor set up for server
 fun main() {
-    embeddedServer(Netty, port = 8004, module = Application::userPage).start(wait = true)
+    embeddedServer(Netty, port = 8014, module = Application::userPage).start(wait = true)
 }
+
+//lists for bookshelves
+val currentlyReadingShelf = mutableListOf<String>("Moment of Truth", "Life As We Knew It")
+val wantToReadShelf = mutableListOf<String>("Five Feet Apart")
+val recommendedShelf = mutableListOf<String>("The Rest of The Story")
+val finishedShelf = mutableListOf<String>("Legend", "Prodigy", "Champion", "Rebel")
+val favoritesShelf = mutableListOf<String>("The Darkest Minds", "Never Fade", "In the Afterlight", "The Naturals", "")
+val shelves = mutableListOf(currentlyReadingShelf, wantToReadShelf, recommendedShelf, finishedShelf, favoritesShelf)
+
+fun shelves(): String {
+    for (shelf in shelves) {
+        if (shelf.size != 0) {
+            for (book in shelf) {
+                return book
+            }
+            continue
+        }
+        when (shelf) {
+            currentlyReadingShelf -> return "You aren't currently reading anything--click the Explore tab to start reading!"
+            wantToReadShelf -> return "This shelf is currently empty--click the Explore tab to add books to this shelf!"
+            recommendedShelf -> return "You currently don't have any recommended books :("
+            finishedShelf -> return "You haven't finished any books yet :("
+            favoritesShelf -> return "You don't have any favorite books yet, but don't worry!  You'll find one you really love!"
+        }
+    }
+    return "SORRY!  The site owner hasn't gotten to this part to work yet!"
+    //return "ERROR!  Sorry, it seems like this isn't working correctly"
+}
+
+/**********************************************************************************************************************/
+//I STILL NEED TO WORK ON THE FUNCTIONS BELOW--REQUIRES THE FRONTEND TO WORK TOO
+
+
+//function that'll go into button - so if a button is clicked, this function will add the selected book onto the Want to Read shelf
+// fun addBook() {
+//     val selectedBook = /*idk how to get this yet*/
+//     val selectedBookIndex = currentlyReadingShelf.indexOf(/*selectedBook*/)
+//     currentlyReadingShelf.removeAt(selectedBookIndex)
+//         currentlyReadingShelf.add()
+//     /*selected shelf want to move to*/.add(/*selectedShelf.size*/, selectedBook)
+// }
+
+//this function adds a shelf after the "Add Shelf" button is clicked
+// fun addShelf() {
+//     val newShelf = /*INSERT WHATEVER USER TYPES INTO THE TEXTBOOK AS SHELF NAME HERE!*/
+// }
