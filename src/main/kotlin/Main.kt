@@ -25,8 +25,7 @@ fun welcome(): String {
 //part of gson
 data class UserPages(val user: String, val pageTitle: String)
 data class SignIn(val username: String, val password: String, val name: String)
-
-//book info
+data class LibraryInfo(val shelf: String, val book: String, val author: String, val message: String)
 data class BookInfo(val title: String, val author: String)
 
 //Adding an extension function to the class Application
@@ -71,18 +70,30 @@ fun Application.userPage() {
         /////
         get("/{user}/{page}") {
             try {
+                //with Mustache
                 val user = call.parameters["user"]
                 val page = call.parameters["page"]
+                val userDetails = SignIn("username", "password", "$user")
+                when (page) {
+                    "home" -> call.respond(MustacheContent("Home.html", mapOf("userDetails" to userDetails)))
+                    "explore" -> call.respond(MustacheContent("Explore.html", mapOf("userDetails" to userDetails)))
+                    "library" -> call.respond(MustacheContent("Library.html", mapOf("userDetails" to userDetails)))
+                    "book buddies" -> call.respond(MustacheContent("BookBuddies.html", mapOf("userDetails" to userDetails)))
+                }
+
+                //without Mustache (original code)
+                // val user = call.parameters["user"]
+                // val page = call.parameters["page"]
                 val userPage = when (page) {
-                    "home" -> "Welcome back, $user!"
-                    "explore" -> "These books might interest you, $user!"
+                    // "home" -> "Welcome back, $user!"
+                    // "explore" -> "These books might interest you, $user!"
                     "library" ->
                         "$user's Library" +
                             "\n\n\nCurrently Reading" +
                             "\n${shelves()}" +
                             "\n\nWant to Read" +
                             "\n${shelves()}" +
-                            "\n\nBooks Recommended by Your Book Buddies" +
+                            "\n\nBooks Recommended By Your Book Buddies" +
                             "\n${shelves()}" +
                             "\n\nFinished Reading" +
                             "\n${shelves()}" +
@@ -98,10 +109,7 @@ fun Application.userPage() {
 
                 //the following can be used to return content in gson:
                 //val pageDetails = UserPages(user!!, userPage)
-
-                //For Mustache
-                val pageDetails = UserPages("Megan", "home")
-                call.respond(MustacheContent("TestTemplate.html", mapOf("pageDetails" to pageDetails)))
+                //call.respond(pageDetails)
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest)
             }
@@ -121,24 +129,41 @@ val recommendedShelf = mutableListOf("The Rest of The Story")
 val finishedShelf = mutableListOf("Legend", "Prodigy", "Champion", "Rebel")
 val favoritesShelf = mutableListOf("The Darkest Minds", "Never Fade", "In the Afterlight", "The Naturals", "")
 val shelves = mutableListOf(currentlyReadingShelf, wantToReadShelf, recommendedShelf, finishedShelf, favoritesShelf)
+val cRAuthor = mutableListOf("Kasie West", "Susan Beth Pfeffer")
+val wTRAuthor = mutableListOf("Rachael Lippincott")
+val fAuthor = mutableListOf("Sarah Dessen")
+val favAuthor = mutableListOf("Marie Lu", "Marie Lu", "Marie Lu", "Marie Lu")
+val authors = mutableListOf(cRAuthor, wTRAuthor, fAuthor, favAuthor)
 
-fun shelves(): String {
+fun shelves() {
     for (shelf in shelves) {
         if (shelf.size != 0) {
             for (book in shelf) {
-                return book
+                val bookInfo = BookInfo(book, "author")
+                val books = when (shelf) {
+                    currentlyReadingShelf -> LibraryInfo("Currently Reading Shelf", bookInfo.title, bookInfo.author, "")
+                    wantToReadShelf -> LibraryInfo("Want to Read", bookInfo.title, bookInfo.author, "")
+                    recommendedShelf -> LibraryInfo("Books Recommended By Book Buddies", bookInfo.title, bookInfo.author, "")
+                    finishedShelf -> LibraryInfo("Finished Reading", bookInfo.title, bookInfo.author, "")
+                    favoritesShelf -> LibraryInfo("megan's Favorites <3", bookInfo.title, bookInfo.author, "")
+                    else -> throw Exception("Um...there's a problem")
+                }
+                call.respond(MustacheContent("Library.html", mapOf("books" to books)))
             }
             continue
-        }
-        when (shelf) {
-            currentlyReadingShelf -> return "You aren't currently reading anything--click the Explore tab to start reading!"
-            wantToReadShelf -> return "This shelf is currently empty--click the Explore tab to add books to this shelf!"
-            recommendedShelf -> return "You currently don't have any recommended books :("
-            finishedShelf -> return "You haven't finished any books yet :("
-            favoritesShelf -> return "You don't have any favorite books yet, but don't worry!  You'll find one you really love!"
+        } else {
+            val emptyShelf = when (shelf) {
+                currentlyReadingShelf -> LibraryInfo("Currently Reading Shelf", "", "", "You aren't currently reading anything--click the Explore tab to start reading!")
+                wantToReadShelf -> LibraryInfo("Want to Read", "", "", "This shelf is currently empty--click the Explore tab to add books to this shelf!")
+                recommendedShelf -> LibraryInfo("Books Recommended By Your Book Buddies", "", "","You currently don't have any recommended books :(")
+                finishedShelf -> LibraryInfo("Finished Reading", "", "","You haven't finished any books yet :(")
+                favoritesShelf -> LibraryInfo("megan's Favorites", "", "","You don't have any favorite books yet, but don't worry!  You'll find one you really love!")
+                else -> throw Exception("Um...there's a problem")
+            }
+            MustacheContent("Library.html", mapOf("emptyShelf" to emptyShelf))
         }
     }
-    return "SORRY!  The site owner hasn't gotten to this part to work yet!"
+    // "SORRY!  The site owner hasn't gotten to this part to work yet!"
     // "ERROR!  Sorry, it seems like this isn't working correctly"
 }
 
