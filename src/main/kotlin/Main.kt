@@ -1,4 +1,5 @@
 // import freemarker.cache.ClassTemplateLoader
+import com.github.mustachejava.DefaultMustacheFactory
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -14,6 +15,8 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.mustache.Mustache
+import io.ktor.mustache.MustacheContent
 
 fun welcome(): String {
     return "Welcome!"
@@ -37,6 +40,11 @@ fun Application.userPage() {
     // install(FreeMarker) {
     //     templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     // }
+
+    // Mustache
+    install(Mustache) {
+        mustacheFactory = DefaultMustacheFactory("templates")
+    }
 
     //routes
     routing {
@@ -86,11 +94,14 @@ fun Application.userPage() {
                             "\nYou currently don't have any book buddies, but these users have read the same books as you--maybe they'll be your next book buddy! :)"
                     else -> throw Exception("The page '$page' does not exist")
                 }
-                call.respond(userPage)
+                // call.respond(userPage)
 
                 //the following can be used to return content in gson:
-                // val pageDetails = UserPages(user!!, userPage)
-                // call.respond(pageDetails)
+                //val pageDetails = UserPages(user!!, userPage)
+
+                //For Mustache
+                val pageDetails = UserPages("Megan", "home")
+                call.respond(MustacheContent("TestTemplate.html", mapOf("pageDetails" to pageDetails)))
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest)
             }

@@ -25,6 +25,9 @@ dependencies {
     //FreeMarker
     // implementation("io.ktor:ktor-freemarker:$ktorVersion")
 
+    //Mustache
+    implementation("io.ktor:ktor-mustache:$ktorVersion")
+
     // Kotlintest dependency
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
