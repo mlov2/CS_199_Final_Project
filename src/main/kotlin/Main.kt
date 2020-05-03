@@ -23,10 +23,10 @@ fun welcome(): String {
 }
 
 //part of gson
-data class UserPages(val user: String, val pageTitle: String)
+// data class UserPages(val user: String, val pageTitle: String)
 data class SignIn(val username: String, val password: String, val name: String)
 data class LibraryInfo(val shelf: String, val book: String, val author: String, val message: String)
-data class BookInfo(val title: String, val author: String)
+// data class BookInfo(val title: String, val author: String)
 
 //Adding an extension function to the class Application
 fun Application.userPage() {
@@ -48,6 +48,7 @@ fun Application.userPage() {
     //routes
     routing {
         get("/") {
+         // //FreeMarker stuff
          //   val phrase = "my CS 199 Final Project"
          //   call.respond(FreeMarkerContent("Welcome.ftl", phrase))
 
@@ -80,6 +81,7 @@ fun Application.userPage() {
                 val user = call.parameters["user"]
                 val page = call.parameters["page"]
                 val userDetails = SignIn("username", "password", "$user")
+                val populate = mutableMapOf<String, Any>()
                 when (page) {
                     "home" -> call.respond(MustacheContent("Home.html", mapOf("userDetails" to userDetails)))
                     "explore" -> call.respond(MustacheContent("Explore.html", mapOf("userDetails" to userDetails)))
@@ -87,10 +89,13 @@ fun Application.userPage() {
                         if (currentlyReadingShelf.isNotEmpty()) {
                             for ((book, author) in currentlyReadingShelf) {
                                 //val bookInfo = BookInfo(book, author)
+                                //println(book + "by" + author)
                                 val books = LibraryInfo("Currently Reading Shelf", book, author, "")
-                                call.respond(MustacheContent("Library.html", mapOf("books" to books, "userDetails" to userDetails)))
-                                continue
+                                populate.put("books", books)
                             }
+                            println(populate)
+                            populate.put("userDetails", userDetails)
+                            call.respond(MustacheContent("Library.html", populate))
                         } else {
                             val emptyShelf = LibraryInfo("Currently Reading Shelf", "", "", "You aren't currently reading anything--click the Explore tab to start reading!")
                             call.respond(MustacheContent("Library.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
