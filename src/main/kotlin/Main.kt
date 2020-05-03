@@ -85,7 +85,6 @@ fun Application.userPage() {
                     "home" -> call.respond(MustacheContent("Home.html", mapOf("userDetails" to userDetails)))
                     "explore" -> call.respond(MustacheContent("Explore.html", mapOf("userDetails" to userDetails)))
                     "library" -> call.respond(MustacheContent("Library.html", mapOf("userDetails" to userDetails)))
-                    // "library" -> call.respond(MustacheContent("Library.html", mapOf("userDetails" to userDetails)))
                     "book buddies" -> call.respond(MustacheContent("BookBuddies.html", mapOf("userDetails" to userDetails)))
                 }
 
