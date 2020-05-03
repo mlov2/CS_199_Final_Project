@@ -81,26 +81,10 @@ fun Application.userPage() {
                 val user = call.parameters["user"]
                 val page = call.parameters["page"]
                 val userDetails = SignIn("username", "password", "$user")
-                val populate = mutableMapOf<String, Any>()
                 when (page) {
                     "home" -> call.respond(MustacheContent("Home.html", mapOf("userDetails" to userDetails)))
                     "explore" -> call.respond(MustacheContent("Explore.html", mapOf("userDetails" to userDetails)))
-                    "library" -> {
-                        if (currentlyReadingShelf.isNotEmpty()) {
-                            for ((book, author) in currentlyReadingShelf) {
-                                //val bookInfo = BookInfo(book, author)
-                                //println(book + "by" + author)
-                                val books = LibraryInfo("Currently Reading Shelf", book, author, "")
-                                populate.put("books", books)
-                            }
-                            println(populate)
-                            populate.put("userDetails", userDetails)
-                            call.respond(MustacheContent("Library.html", populate))
-                        } else {
-                            val emptyShelf = LibraryInfo("Currently Reading Shelf", "", "", "You aren't currently reading anything--click the Explore tab to start reading!")
-                            call.respond(MustacheContent("Library.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
-                        }
-                    }
+                    "library" -> call.respond(MustacheContent("Library.html", mapOf("userDetails" to userDetails)))
                     // "library" -> call.respond(MustacheContent("Library.html", mapOf("userDetails" to userDetails)))
                     "book buddies" -> call.respond(MustacheContent("BookBuddies.html", mapOf("userDetails" to userDetails)))
                 }
@@ -139,6 +123,94 @@ fun Application.userPage() {
                 call.respond(HttpStatusCode.BadRequest)
             }
         }
+        get("/{user}/library/{shelf}") {
+            try {
+                //with Mustache
+                val user = call.parameters["user"]
+                val shelf = call.parameters["shelf"]
+                val userDetails = SignIn("username", "password", "$user")
+                val populate = mutableMapOf<String, Any>()
+                when (shelf) {
+                    "currently reading" -> {
+                        val bookshelf = "Currently Reading"
+                        if (currentlyReadingShelf.isNotEmpty()) {
+                            for ((book, author) in currentlyReadingShelf) {
+                                val books = LibraryInfo(bookshelf, book, author, "")
+                                populate.put("books", books)
+                            }
+                            println(populate)
+                            populate.put("userDetails", userDetails)
+                            call.respond(MustacheContent("Bookshelf.html", populate))
+                        } else {
+                            val emptyShelf = LibraryInfo(bookshelf, "", "", "You aren't currently reading anything--click the Explore tab to start reading!")
+                            call.respond(MustacheContent("Bookshelf.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
+                        }
+                    }
+                    "want to read" -> {
+                        val bookshelf = "Want to Read"
+                        if (wantToReadShelf.isNotEmpty()) {
+                            for ((book, author) in wantToReadShelf) {
+                                val books = LibraryInfo(bookshelf, book, author, "")
+                                populate.put("books", books)
+                            }
+                            println(populate)
+                            populate.put("userDetails", userDetails)
+                            call.respond(MustacheContent("Bookshelf.html", populate))
+                        } else {
+                            val emptyShelf = LibraryInfo(bookshelf, "", "", "This shelf is currently empty--click the Explore tab to add books to this shelf!")
+                            call.respond(MustacheContent("Bookshelf.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
+                        }
+                    }
+                    "recommended" -> {
+                        val bookshelf = "Books Recommended By Your Book Buddies"
+                        if (recommendedShelf.isNotEmpty()) {
+                            for ((book, author) in recommendedShelf) {
+                                val books = LibraryInfo(bookshelf, book, author, "")
+                                populate.put("books", books)
+                            }
+                            println(populate)
+                            populate.put("userDetails", userDetails)
+                            call.respond(MustacheContent("Bookshelf.html", populate))
+                        } else {
+                            val emptyShelf = LibraryInfo(bookshelf, "", "", "You currently don't have any recommended books :(")
+                            call.respond(MustacheContent("Bookshelf.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
+                        }
+                    }
+                    "finished" -> {
+                        val bookshelf = "Finished Reading"
+                        if (finishedShelf.isNotEmpty()) {
+                            for ((book, author) in finishedShelf) {
+                                val books = LibraryInfo(bookshelf, book, author, "")
+                                populate.put("books", books)
+                            }
+                            println(populate)
+                            populate.put("userDetails", userDetails)
+                            call.respond(MustacheContent("Bookshelf.html", populate))
+                        } else {
+                            val emptyShelf = LibraryInfo(bookshelf, "", "", "You haven't finished any books yet :(")
+                            call.respond(MustacheContent("Bookshelf.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
+                        }
+                    }
+                    "favorites" -> {
+                        val bookshelf = "Your Favorites"
+                        if (favoritesShelf.isNotEmpty()) {
+                            for ((book, author) in favoritesShelf) {
+                                val books = LibraryInfo(bookshelf, book, author, "")
+                                populate.put("books", books)
+                            }
+                            println(populate)
+                            populate.put("userDetails", userDetails)
+                            call.respond(MustacheContent("Bookshelf.html", populate))
+                        } else {
+                            val emptyShelf = LibraryInfo(bookshelf, "", "", "You don't have any favorite books yet, but don't worry!  You'll find one you really love!")
+                            call.respond(MustacheContent("Bookshelf.html", mapOf("emptyShelf" to emptyShelf, "userDetails" to userDetails)))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
     }
 }
 
@@ -153,7 +225,7 @@ val wantToReadShelf = mapOf("Five Feet Apart" to "Rachael Lippincott")
 val recommendedShelf = mapOf("The Rest of The Story" to "Sarah Dessen")
 val finishedShelf = mapOf("Legend" to "Marie Lu", "Prodigy" to "Marie Lu", "Champion" to "Marie Lu", "Rebel" to "Marie Lu")
 val favoritesShelf = mapOf("The Darkest Minds" to "Alexandra Bracken", "Never Fade" to "Alexandra Bracken", "In the Afterlight" to "Alexandra Bracken", "The Naturals" to "Jennifer Lynn Barnes")
-val shelves = mutableListOf(currentlyReadingShelf, wantToReadShelf, recommendedShelf, finishedShelf, favoritesShelf)
+//val shelves = mutableListOf(currentlyReadingShelf, wantToReadShelf, recommendedShelf, finishedShelf, favoritesShelf)
 
 //DOESN'T WORK
 // fun Application.currentlyReadingShelf() {
