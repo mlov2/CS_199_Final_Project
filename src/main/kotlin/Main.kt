@@ -226,7 +226,7 @@ val finishedShelf = mapOf("Legend" to "Marie Lu", "Prodigy" to "Marie Lu", "Cham
 val favoritesShelf = mapOf("The Darkest Minds" to "Alexandra Bracken", "Never Fade" to "Alexandra Bracken", "In the Afterlight" to "Alexandra Bracken", "The Naturals" to "Jennifer Lynn Barnes")
 //val shelves = mutableListOf(currentlyReadingShelf, wantToReadShelf, recommendedShelf, finishedShelf, favoritesShelf)
 
-//DOESN'T WORK
+//ATTEMPTING TO SEE IF I CAN POPULATE A SINGLE SHELF--DOESN'T WORK
 // fun Application.currentlyReadingShelf() {
 //     install(Mustache) {
 //         mustacheFactory = DefaultMustacheFactory("templates")
@@ -245,6 +245,7 @@ val favoritesShelf = mapOf("The Darkest Minds" to "Alexandra Bracken", "Never Fa
 //     }
 // }
 
+//ATTEMPTING TO POPULATE SHELVES ALL AT ONCE--DOESN'T WORK
 // fun shelves() {
 //     for (shelf in shelves) {
 //         if (shelf.size != 0) {
